@@ -1,0 +1,34 @@
+<?php 
+$curId = $this->getRequest()->getParam('cat');
+$catalogSearchHelper =  $this->helper('catalogsearch');
+$categorySearchHelper = $this->helper('catalogcategorysearch');
+?>
+<form id="search_mini_form" action="<?php echo $catalogSearchHelper->getResultUrl() ?>" method="get">
+	<div class="input-group input-mob-group">
+		<?php if($categorySearchHelper->showCategoriesDropdown()){ ?>
+		<div class="input-group-addon search-categories">
+			<div class="select-categories">
+				<select id="<?php echo $categorySearchHelper->getCategoryParamName() ?>" name="<?php echo $categorySearchHelper->getCategoryParamName() ?>">
+					<option value=""><?php echo $this->__('All Categories') ?></option>
+					<?php foreach ($this->getSearchableCategories() as $mainCategory): ?>
+						<option value="<?php echo $mainCategory->getEntityId()?>"><?php echo $mainCategory->getName() ?></option>
+						<?php if ($categorySearchHelper->showSubCategories()) : ?>
+							<?php foreach ($this->getSearchableSubCategories($mainCategory) as $category) : ?>
+								<option value="<?php echo $category->getEntityId()?>"><?php echo $categorySearchHelper->getIndentationText() . $category->getName()?></option>
+							<?php endforeach;?>
+						<?php endif ?>
+					<?php endforeach;?>
+				</select>
+			</div>
+		</div>
+		<?php } ?>
+        <label class="hide" for="search"><?php echo $this->__('Search:') ?></label>
+		<span class="twitter-typeahead">
+			<input id="search" type="search" name="<?php echo $catalogSearchHelper->getQueryParamName() ?>" value="<?php echo $catalogSearchHelper->getEscapedQueryText() ?>" class="required-entry search-field" maxlength="<?php echo $catalogSearchHelper->getMaxQueryLength();?>" placeholder="<?php echo Mage::helper('core')->quoteEscape($this->__('Search entire store here...')) ?>" />
+		</span>
+		<div class="input-group-addon">
+			<button type="submit" title="<?php echo Mage::helper('core')->quoteEscape($this->__('Search')) ?>" class="search-btn"><i class="fa fa-search"></i><span class="hide"><?php echo $this->__('Search') ?></span></button>
+		</div>
+		<div id="search_autocomplete" class="search-autocomplete"></div>
+	</div>
+</form>
